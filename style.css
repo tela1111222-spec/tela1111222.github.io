@@ -1,0 +1,508 @@
+/* ============================================
+   Design Tokens
+   ============================================ */
+:root {
+  --color-bg: #1a1a2e;
+  --color-surface: #16213e;
+  --color-surface-alt: #0f3460;
+  --color-primary: #e94560;
+  --color-primary-hover: #ff6b81;
+  --color-text: #eaeaea;
+  --color-text-muted: #a0a0b8;
+  --color-board: #d4a76a;
+  --color-board-dark: #b8874a;
+  --color-grid-line: #8b6914;
+  --color-black-stone: #1a1a1a;
+  --color-black-stone-shine: #555;
+  --color-white-stone: #f0f0f0;
+  --color-white-stone-shine: #fff;
+  --color-overlay: rgba(10, 10, 30, 0.88);
+  --color-win-glow: #ffd700;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.35);
+  --shadow-stone: 2px 2px 6px rgba(0, 0, 0, 0.5);
+  --transition-fast: 0.18s ease;
+  --transition-normal: 0.3s ease;
+  --font-family: 'Noto Sans TC', 'Segoe UI', sans-serif;
+}
+
+/* ============================================
+   Reset & Base
+   ============================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-family);
+  background: linear-gradient(135deg, var(--color-bg) 0%, #0f3460 100%);
+  color: var(--color-text);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px 10px 40px;
+}
+
+/* ============================================
+   Container
+   ============================================ */
+.container {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+}
+
+/* ============================================
+   Header
+   ============================================ */
+#game-header {
+  text-align: center;
+  padding: 10px 0 0;
+}
+
+#game-header h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--color-primary), #ff9a76);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 4px;
+}
+
+.subtitle {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  margin-top: 4px;
+  letter-spacing: 2px;
+}
+
+/* ============================================
+   Info Card
+   ============================================ */
+.info-card {
+  background: var(--color-surface);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-md);
+  padding: 14px 20px;
+  width: 100%;
+  box-shadow: var(--shadow-card);
+}
+
+.info-card h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+}
+
+.info-card ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.info-card li {
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ============================================
+   Stone Icon (inline)
+   ============================================ */
+.stone-icon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-stone);
+}
+
+.black-icon {
+  background: radial-gradient(circle at 35% 30%, var(--color-black-stone-shine), var(--color-black-stone) 70%);
+}
+
+.white-icon {
+  background: radial-gradient(circle at 35% 30%, var(--color-white-stone-shine), #ccc 80%);
+  border: 1px solid #bbb;
+}
+
+/* ============================================
+   Status Bar
+   ============================================ */
+.status-bar {
+  width: 100%;
+  background: var(--color-surface);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-md);
+  padding: 12px 20px;
+  box-shadow: var(--shadow-card);
+}
+
+.turn-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+/* ============================================
+   Board
+   ============================================ */
+#board-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+#board {
+  /* 15×15 board: 14 gaps between lines + padding for edge stones */
+  --cell-size: 32px;
+  --board-pad: calc(var(--cell-size) / 2);
+  width: calc(14 * var(--cell-size) + var(--cell-size));
+  height: calc(14 * var(--cell-size) + var(--cell-size));
+  background: var(--color-board);
+  border-radius: var(--radius-sm);
+  position: relative;
+  box-shadow: var(--shadow-card), inset 0 0 30px rgba(0, 0, 0, 0.15);
+  border: 3px solid var(--color-board-dark);
+}
+
+/* Grid lines (drawn via JS, but we style the cells) */
+.cell {
+  position: absolute;
+  width: var(--cell-size);
+  height: var(--cell-size);
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 2;
+  border-radius: 50%;
+}
+
+.cell:hover::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 70%;
+  height: 70%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  transition: opacity var(--transition-fast);
+}
+
+.cell.occupied {
+  cursor: default;
+}
+
+.cell.occupied:hover::before {
+  display: none;
+}
+
+/* Grid lines — horizontal & vertical */
+.grid-line-h,
+.grid-line-v {
+  position: absolute;
+  background: var(--color-grid-line);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.grid-line-h {
+  height: 1px;
+  left: var(--board-pad);
+  right: var(--board-pad);
+}
+
+.grid-line-v {
+  width: 1px;
+  top: var(--board-pad);
+  bottom: var(--board-pad);
+}
+
+/* Star points (天元 & 星位) */
+.star-point {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--color-grid-line);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Stones */
+.stone {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 82%;
+  height: 82%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  z-index: 3;
+  pointer-events: none;
+  animation: stone-pop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  box-shadow: var(--shadow-stone);
+}
+
+.stone.black {
+  background: radial-gradient(circle at 35% 30%, var(--color-black-stone-shine), var(--color-black-stone) 65%);
+}
+
+.stone.white {
+  background: radial-gradient(circle at 35% 30%, var(--color-white-stone-shine), #ccc 80%);
+  border: 1px solid #bbb;
+}
+
+/* Winning stones glow */
+.stone.win-highlight {
+  box-shadow: 0 0 12px 4px var(--color-win-glow), var(--shadow-stone);
+}
+
+@keyframes stone-pop {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Last move indicator */
+.stone.last-move::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* ============================================
+   Controls
+   ============================================ */
+.controls {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+button {
+  font-family: var(--font-family);
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 12px 32px;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+#restart-btn {
+  background: linear-gradient(135deg, var(--color-primary), #c0392b);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(233, 69, 96, 0.35);
+}
+
+#restart-btn:hover {
+  background: linear-gradient(135deg, var(--color-primary-hover), var(--color-primary));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(233, 69, 96, 0.5);
+}
+
+#restart-btn:active {
+  transform: translateY(0);
+}
+
+.btn-icon {
+  font-size: 1.2rem;
+}
+
+/* ============================================
+   Scoreboard
+   ============================================ */
+.score-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 14px 20px;
+}
+
+.score-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.score-label {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.score-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-text);
+  min-width: 28px;
+  text-align: center;
+}
+
+.score-divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ============================================
+   Victory Overlay
+   ============================================ */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-overlay);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: overlay-in 0.35s ease;
+}
+
+.overlay.hidden {
+  display: none;
+}
+
+.overlay-content {
+  background: var(--color-surface);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  padding: 40px 50px;
+  text-align: center;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+  animation: overlay-content-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.victory-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  box-shadow: 0 0 20px 6px var(--color-win-glow);
+}
+
+.overlay-content h2 {
+  font-size: 1.6rem;
+  margin-bottom: 24px;
+  letter-spacing: 2px;
+}
+
+#overlay-restart-btn {
+  background: linear-gradient(135deg, var(--color-primary), #c0392b);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(233, 69, 96, 0.35);
+  font-size: 1.05rem;
+  padding: 14px 36px;
+}
+
+#overlay-restart-btn:hover {
+  background: linear-gradient(135deg, var(--color-primary-hover), var(--color-primary));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(233, 69, 96, 0.5);
+}
+
+#overlay-restart-btn:active {
+  transform: translateY(0);
+}
+
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes overlay-content-in {
+  from { transform: scale(0.8); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+/* ============================================
+   Game Over board lock
+   ============================================ */
+#board.game-over .cell {
+  cursor: default;
+}
+
+#board.game-over .cell:hover::before {
+  display: none;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 520px) {
+  #board {
+    --cell-size: 24px;
+  }
+
+  .star-point {
+    width: 6px;
+    height: 6px;
+  }
+
+  .stone.last-move::after {
+    width: 6px;
+    height: 6px;
+  }
+
+  #game-header h1 {
+    font-size: 1.7rem;
+  }
+
+  .overlay-content {
+    padding: 30px 28px;
+  }
+
+  .overlay-content h2 {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 380px) {
+  #board {
+    --cell-size: 20px;
+  }
+}

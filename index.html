@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="五子棋線上遊戲 — 雙人對弈，簡潔流暢的棋盤介面">
+  <title>五子棋 — Gomoku</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header id="game-header">
+      <h1>五子棋</h1>
+      <p class="subtitle">Gomoku — 雙人對弈</p>
+    </header>
+
+    <!-- How to play -->
+    <section id="how-to-play" class="info-card">
+      <h2>遊戲玩法</h2>
+      <ul>
+        <li><span class="stone-icon black-icon"></span> 黑子先手，雙方輪流落子</li>
+        <li>點擊棋盤交叉點放置棋子</li>
+        <li>先在任意方向連成 <strong>五子</strong> 者獲勝</li>
+      </ul>
+    </section>
+
+    <!-- Game status -->
+    <div id="game-status" class="status-bar">
+      <div class="turn-indicator">
+        <span class="stone-icon" id="turn-stone"></span>
+        <span id="status-text">黑子的回合</span>
+      </div>
+    </div>
+
+    <!-- Board -->
+    <div id="board-wrapper">
+      <div id="board"></div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button id="restart-btn" type="button">
+        <span class="btn-icon">↻</span> 重新開始
+      </button>
+    </div>
+
+    <!-- Score -->
+    <div id="scoreboard" class="info-card score-card">
+      <div class="score-item">
+        <span class="stone-icon black-icon"></span>
+        <span class="score-label">黑子</span>
+        <span class="score-value" id="score-black">0</span>
+      </div>
+      <div class="score-divider"></div>
+      <div class="score-item">
+        <span class="stone-icon white-icon"></span>
+        <span class="score-label">白子</span>
+        <span class="score-value" id="score-white">0</span>
+      </div>
+    </div>
+
+    <!-- Victory overlay -->
+    <div id="victory-overlay" class="overlay hidden">
+      <div class="overlay-content">
+        <div class="victory-icon" id="victory-icon"></div>
+        <h2 id="victory-text"></h2>
+        <button id="overlay-restart-btn" type="button">
+          <span class="btn-icon">↻</span> 再來一局
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
